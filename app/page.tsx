@@ -129,7 +129,13 @@ export default function Home() {
               <h2 className="text-2xl font-bold text-gray-900">
                 Productos Destacados
                 <span className="inline-block ml-2">
-                  <img src="/paw.svg" alt="Paw icon" className="w-6 h-6" />
+                  <Image
+                    src="/paw.svg"
+                    alt="Paw icon"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6"
+                  />
                 </span>
               </h2>
             </div>

@@ -2,6 +2,27 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
+// Extender los tipos
+declare module 'next-auth' {
+  interface User {
+    id: string;
+  }
+  interface Session {
+    user: {
+      id: string;
+      email?: string | null;
+      name?: string | null;
+      image?: string | null;
+    }
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
+  }
+}
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -33,7 +54,7 @@ const handler = NextAuth({
   ],
   pages: {
     signIn: '/auth/login',
-    signUp: '/auth/register',
+    error: '/auth/error',
   },
   session: {
     strategy: "jwt",
@@ -47,7 +68,7 @@ const handler = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
+        session.user.id = token.id;
       }
       return session;
     },
