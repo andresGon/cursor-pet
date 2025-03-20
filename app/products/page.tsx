@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useCart } from '../hooks/useCart';
 import { useSearchParams } from 'next/navigation';
 import ProductModal from '../components/ProductModal';
+import Image from 'next/image';
 
 interface Product {
   id: number;
@@ -33,34 +34,35 @@ export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const apiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL;
-        if (!apiUrl) {
-          throw new Error('La URL de la API no está configurada');
-        }
-        
-        const response = await axios.get(`${apiUrl}/api/products?populate=*`);
-        
-        if (response.data && Array.isArray(response.data.data)) {
-          setProducts(response.data.data);
-        } else {
-          setProducts([]);
-          console.error('Formato de respuesta inválido:', response.data);
-        }
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setError('Error al cargar los productos. Por favor, intente más tarde.');
-      } finally {
-        setLoading(false);
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const apiUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL;
+      if (!apiUrl) {
+        throw new Error('La URL de la API no está configurada');
       }
-    };
-
-    fetchProducts();
+      
+      const response = await axios.get<{ data: Product[] }>(`${apiUrl}/api/products?populate=*`);
+      
+      if (response.data && Array.isArray(response.data.data)) {
+        setProducts(response.data.data);
+      } else {
+        setProducts([]);
+        console.error('Formato de respuesta inválido:', response.data);
+      }
+      setError(null);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      console.error('Error fetching products:', errorMessage);
+      setError('Error al cargar los productos. Por favor, intente más tarde.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void fetchProducts();
+  }, [fetchProducts]);
 
   useEffect(() => {
     if (categoryParam) {
@@ -73,15 +75,19 @@ export default function ProductsPage() {
     }
   }, [products, categoryParam]);
 
-  const handleProductClick = (product: Product) => {
+  const handleProductClick = useCallback((product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
     setSelectedProduct(null);
-  };
+  }, []);
+
+  const calculateDiscountedPrice = useCallback((price: number, discount: number): number => {
+    return price - (price * (discount / 100));
+  }, []);
 
   if (loading) {
     return (
@@ -98,10 +104,6 @@ export default function ProductsPage() {
       </div>
     );
   }
-
-  const calculateDiscountedPrice = (price: number, discount: number) => {
-    return price - (price * (discount / 100));
-  };
 
   const categoryTitle = categoryParam 
     ? `Productos para ${categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1)}`
@@ -126,10 +128,13 @@ export default function ProductsPage() {
             >
               <div className="relative aspect-square mb-4">
                 {product.images && product.images.length > 0 ? (
-                  <img
+                  <Image
                     src={product.images[0].url}
                     alt={product.imageAlt}
-                    className="w-full h-full object-cover rounded-lg"
+                    fill
+                    className="object-cover rounded-lg"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 20vw"
+                    priority={false}
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
@@ -163,11 +168,13 @@ export default function ProductsPage() {
                     )}
                   </div>
                   <button
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.stopPropagation();
                       addItem(product);
                     }}
                     className="p-2 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors"
+                    type="button"
+                    aria-label="Agregar al carrito"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -180,7 +187,6 @@ export default function ProductsPage() {
         </div>
       )}
 
-      {/* Modal de Producto */}
       <ProductModal
         product={selectedProduct}
         isOpen={isModalOpen}
