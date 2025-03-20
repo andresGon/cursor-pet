@@ -1,6 +1,7 @@
 'use client';
 
 import { useCart } from '../hooks/useCart';
+import Image from 'next/image';
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity } = useCart();
@@ -30,11 +31,15 @@ export default function CartPage() {
               >
                 <div className="flex items-center space-x-4">
                   {item.images && item.images.length > 0 ? (
-                    <img
-                      src={item.images[0].url}
-                      alt={item.imageAlt}
-                      className="w-20 h-20 object-cover rounded-md"
-                    />
+                    <div className="relative w-20 h-20">
+                      <Image
+                        src={item.images[0].url}
+                        alt={item.imageAlt}
+                        fill
+                        className="object-cover rounded-md"
+                        sizes="80px"
+                      />
+                    </div>
                   ) : (
                     <div className="w-20 h-20 bg-gray-200 rounded-md flex items-center justify-center">
                       <span className="text-gray-500">Sin imagen</span>

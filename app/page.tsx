@@ -5,6 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useCart } from './hooks/useCart';
 import ProductModal from './components/ProductModal';
+import Image from 'next/image';
 
 interface Product {
   id: number;
@@ -106,12 +107,16 @@ export default function Home() {
               </svg>
             </Link>
           </div>
-          <div className="w-1/2 relative">
-            <img
-              src="https://res.cloudinary.com/dzlg5jcqj/image/upload/v1740604345/71KkDedi53L._AC_SX522__rsrxzv.jpg"
-              alt="Producto destacado"
-              className="w-full h-auto object-contain"
-            />
+          <div className="w-1/2">
+            <div className="relative w-full aspect-[4/3]">
+              <Image
+                src="https://res.cloudinary.com/dzlg5jcqj/image/upload/v1740604345/71KkDedi53L._AC_SX522__rsrxzv.jpg"
+                alt="Producto destacado"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -162,11 +167,15 @@ export default function Home() {
               >
                 <div className="relative aspect-square mb-4">
                   {product.images && product.images.length > 0 ? (
-                    <img
-                      src={product.images[0].url}
-                      alt={product.imageAlt}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
+                    <div className="relative aspect-square w-full">
+                      <Image
+                        src={product.images[0].url}
+                        alt={product.imageAlt}
+                        fill
+                        className="object-cover rounded-lg"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 20vw"
+                      />
+                    </div>
                   ) : (
                     <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
                       <span className="text-gray-500">Sin imagen</span>

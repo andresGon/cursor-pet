@@ -6,11 +6,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [error, setError] = useState('');
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,13 +24,13 @@ export default function RegisterPage() {
       });
 
       if (result?.error) {
-        setError(result.error);
+        setErrorMessage(result.error);
       } else {
         router.push('/');
         router.refresh();
       }
     } catch (error) {
-      setError('Ocurrió un error durante el registro');
+      setErrorMessage('Ocurrió un error durante el registro');
     }
   };
 
@@ -98,9 +99,9 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {error && (
+          {errorMessage && (
             <div className="text-red-500 text-sm text-center">
-              {error}
+              {errorMessage}
             </div>
           )}
 

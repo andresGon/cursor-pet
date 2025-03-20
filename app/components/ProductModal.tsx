@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
+import Image from 'next/image';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -86,11 +87,15 @@ export default function ProductModal({ product, isOpen, onClose, onAddToCart }: 
             >
               {product.images.map((image, index) => (
                 <SwiperSlide key={index}>
-                  <img
-                    src={image.url}
-                    alt={`${product.imageAlt} - imagen ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
+                  <div className="relative aspect-square w-full">
+                    <Image
+                      src={image.url}
+                      alt={`${product.imageAlt} - imagen ${index + 1}`}
+                      fill
+                      className="object-cover rounded-lg"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                 </SwiperSlide>
               ))}
             </Swiper>
