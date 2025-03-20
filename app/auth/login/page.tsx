@@ -28,7 +28,7 @@ export default function LoginPage() {
         router.push('/');
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setErrorMessage('Error al iniciar sesión');
     } finally {
       setIsLoading(false);

@@ -30,7 +30,7 @@ export default function RegisterPage() {
         router.push('/');
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setErrorMessage('Ocurrió un error durante el registro');
     } finally {
       setIsLoading(false);

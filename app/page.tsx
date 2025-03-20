@@ -159,33 +159,21 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((product, index) => (
               <div
                 key={product.id}
                 className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 cursor-pointer"
                 onClick={() => handleProductClick(product)}
               >
-                <div className="relative aspect-square mb-4">
-                  {product.images && product.images.length > 0 ? (
-                    <div className="relative aspect-square w-full">
-                      <Image
-                        src={product.images[0].url}
-                        alt={product.imageAlt}
-                        fill
-                        className="object-cover rounded-lg"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 20vw"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                      <span className="text-gray-500">Sin imagen</span>
-                    </div>
-                  )}
-                  {product.discount > 0 && (
-                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                      -{product.discount}%
-                    </span>
-                  )}
+                <div className="relative w-full h-48">
+                  <Image
+                    src={product.images[0]?.url || '/placeholder.png'}
+                    alt={product.title}
+                    fill
+                    className="object-cover rounded-t-lg"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    priority={index === 0}
+                  />
                 </div>
                 <div className="space-y-2">
                   <span className="text-sm text-gray-700">{product.category.categoryName}</span>
