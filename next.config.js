@@ -1,8 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['res.cloudinary.com'], // Ajusta esto según el dominio de tus imágenes
+    domains: [
+      'm.media-amazon.com',
+      'res.cloudinary.com', // Keep this if you're using Cloudinary
+    ],
   },
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig

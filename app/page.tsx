@@ -34,7 +34,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:1337/api/products?populate=*');
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products?populate=*`);
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
           setFilteredProducts(response.data.data);
