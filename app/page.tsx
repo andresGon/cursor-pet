@@ -59,7 +59,8 @@ export default function Home() {
     }
   }, [selectedCategory, products]);
 
-  const calculateDiscountedPrice = (price: number, discount: number) => {
+  const calculateDiscountedPrice = (price: number | null | undefined, discount: number | null | undefined) => {
+    if (!price || !discount) return 0;
     return price - (price * (discount / 100));
   };
 
@@ -186,18 +187,18 @@ export default function Home() {
                   <h3 className="font-semibold text-gray-900 line-clamp-2">{product.title}</h3>
                   <div className="flex items-center">
                     <div className="flex-1">
-                      {product.discount > 0 ? (
+                      {product?.discount > 0 ? (
                         <div className="space-y-1">
                           <span className="text-lg font-bold text-orange-500">
-                            ${calculateDiscountedPrice(product.price, product.discount).toFixed(2)}
+                            ${(product?.price ? calculateDiscountedPrice(product.price, product.discount) : 0).toFixed(2)}
                           </span>
                           <span className="text-sm text-gray-500 line-through block">
-                            ${product.price.toFixed(2)}
+                            ${product?.price?.toFixed(2) || '0.00'}
                           </span>
                         </div>
                       ) : (
                         <span className="text-lg font-bold text-gray-900">
-                          ${product.price.toFixed(2)}
+                          ${product?.price?.toFixed(2) || '0.00'}
                         </span>
                       )}
                     </div>
