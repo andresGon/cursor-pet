@@ -34,13 +34,20 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/products?populate=*`);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337';
+        if (!apiUrl) {
+          throw new Error('La URL de la API no está configurada');
+        }
+        
+        const response = await axios.get(`${apiUrl}/api/products?populate=*`);
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
           setFilteredProducts(response.data.data);
         }
       } catch (error) {
         console.error('Error fetching products:', error);
+        setProducts([]);
+        setFilteredProducts([]);
       }
     };
 
