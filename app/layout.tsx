@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Nunito } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import { getServerSession } from "next-auth";
 import SessionProvider from "./components/SessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
+const nunito = Nunito({
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: "Ziggy - Tienda de Mascotas",
@@ -20,7 +24,7 @@ export default async function RootLayout({
   const session = await getServerSession();
 
   return (
-    <html lang="es" className="scroll-smooth">
+    <html lang="es" className={`scroll-smooth ${nunito.className}`}>
       <body className={`${inter.className} bg-gray-50 text-gray-900`}>
         <SessionProvider session={session}>
           <Navbar />

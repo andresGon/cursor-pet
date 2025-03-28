@@ -3,18 +3,26 @@
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { useCart } from '../hooks/useCart';
+import Image from 'next/image';
 
 export default function Navbar() {
   const { data: session } = useSession();
   const { items } = useCart();
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-white sticky top-0 z-50 py-4">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold text-purple-600">Ziggy</span>
-            <span className="ml-2 text-orange-500">petshop</span>
+        <div className="flex justify-end items-center h-16">
+          <Link href="/" className="flex flex-col items-center mr-auto">
+            <Image
+              src="/images/pet-toy-shop-logo.jpg"
+              alt="Ziggy Petshop"
+              width={90}
+              height={30}
+              className="object-contain"
+              priority
+            />
+            <span className="text-sm font-bold text-gray-900">Toys Pet Shop</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -71,4 +79,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-} 
+}
