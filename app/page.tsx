@@ -103,7 +103,7 @@ export default function Home() {
                     onClick={() => setSelectedCategory(category.slug)}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                       selectedCategory === category.slug
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-[#a5f41d] text-black'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -111,7 +111,7 @@ export default function Home() {
                   </button>
                 ))}
               </div>
-              <Link href="/products" className="text-purple-600 hover:text-purple-700 flex items-center">
+              <Link href="/products" className="text-black hover:text-gray-700 flex items-center">
                 Ver todos
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
@@ -170,10 +170,10 @@ export default function Home() {
                         e.stopPropagation();
                         addItem(product);
                       }}
-                      className="p-2 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors"
+                      className="p-2 rounded-full bg-[#a5f41d] text-purple-600 hover:bg-[#a5f41d]-200 transition-colors"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="black">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </button>
                   </div>
