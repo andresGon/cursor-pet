@@ -5,7 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useCart } from './hooks/useCart';
 import ProductModal from './components/ProductModal';
-import Image from 'next/image';
+import MainBanner from './components/MainBanner';
 
 interface Product {
   id: number;
@@ -34,20 +34,13 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337';
-        if (!apiUrl) {
-          throw new Error('La URL de la API no está configurada');
-        }
-        
-        const response = await axios.get(`${apiUrl}/api/products?populate=*`);
+        const response = await axios.get('http://localhost:1337/api/products?populate=*');
         if (response.data && Array.isArray(response.data.data)) {
           setProducts(response.data.data);
           setFilteredProducts(response.data.data);
         }
       } catch (error) {
         console.error('Error fetching products:', error);
-        setProducts([]);
-        setFilteredProducts([]);
       }
     };
 
@@ -66,8 +59,7 @@ export default function Home() {
     }
   }, [selectedCategory, products]);
 
-  const calculateDiscountedPrice = (price: number | null | undefined, discount: number | null | undefined) => {
-    if (!price || !discount) return 0;
+  const calculateDiscountedPrice = (price: number, discount: number) => {
     return price - (price * (discount / 100));
   };
 
@@ -89,46 +81,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
-      {/* Banner Principal */}
-      <div className="relative bg-[#FFF5F6] overflow-hidden">
-        <div className="container mx-auto px-4 py-16 flex items-center">
-          <div className="w-1/2">
-            <h1 className="text-5xl font-bold mb-4 text-gray-900">
-              Juguetes para Mascotas
-              <br />
-              de Alta Calidad
-            </h1>
-            <p className="text-gray-700 mb-6 text-lg">
-              Los mejores productos para tus compañeros peludos
-            </p>
-            <div className="mb-8">
-              <span className="text-orange-500 text-4xl font-bold">$29.99</span>
-              <span className="text-gray-500 line-through ml-2">$49.99</span>
-            </div>
-            <Link
-              href="/products"
-              className="bg-purple-600 text-white px-8 py-3 rounded-full inline-flex items-center hover:bg-purple-700 transition-colors"
-            >
-              Comprar Ahora
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </Link>
-          </div>
-          <div className="w-1/2">
-            <div className="relative w-full aspect-[4/3]">
-              <Image
-                src="https://res.cloudinary.com/dzlg5jcqj/image/upload/v1740604345/71KkDedi53L._AC_SX522__rsrxzv.jpg"
-                alt="Producto destacado"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <MainBanner />
+      
       {/* Sección de Productos Destacados */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
@@ -137,13 +91,7 @@ export default function Home() {
               <h2 className="text-2xl font-bold text-gray-900">
                 Productos Destacados
                 <span className="inline-block ml-2">
-                  <Image
-                    src="/paw.svg"
-                    alt="Paw icon"
-                    width={24}
-                    height={24}
-                    className="w-6 h-6"
-                  />
+                  <img src="/paw.svg" alt="Paw icon" className="w-6 h-6" />
                 </span>
               </h2>
             </div>
@@ -155,7 +103,7 @@ export default function Home() {
                     onClick={() => setSelectedCategory(category.slug)}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                       selectedCategory === category.slug
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-[#a5f41d] text-black'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -163,7 +111,7 @@ export default function Home() {
                   </button>
                 ))}
               </div>
-              <Link href="/products" className="text-purple-600 hover:text-purple-700 flex items-center">
+              <Link href="/products" className="text-black hover:text-gray-700 flex items-center">
                 Ver todos
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
@@ -173,39 +121,47 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {filteredProducts.map((product, index) => (
+            {filteredProducts.map((product) => (
               <div
                 key={product.id}
                 className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 cursor-pointer"
                 onClick={() => handleProductClick(product)}
               >
-                <div className="relative w-full h-48">
-                  <Image
-                    src={product.images[0]?.url || '/placeholder.png'}
-                    alt={product.title}
-                    fill
-                    className="object-cover rounded-t-lg"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    priority={index === 0}
-                  />
+                <div className="relative aspect-square mb-4">
+                  {product.images && product.images.length > 0 ? (
+                    <img
+                      src={product.images[0].url}
+                      alt={product.imageAlt}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                      <span className="text-gray-500">Sin imagen</span>
+                    </div>
+                  )}
+                  {product.discount > 0 && (
+                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                      -{product.discount}%
+                    </span>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <span className="text-sm text-gray-700">{product.category.categoryName}</span>
                   <h3 className="font-semibold text-gray-900 line-clamp-2">{product.title}</h3>
                   <div className="flex items-center">
                     <div className="flex-1">
-                      {product?.discount > 0 ? (
+                      {product.discount > 0 ? (
                         <div className="space-y-1">
                           <span className="text-lg font-bold text-orange-500">
-                            ${(product?.price ? calculateDiscountedPrice(product.price, product.discount) : 0).toFixed(2)}
+                            ${calculateDiscountedPrice(product.price, product.discount).toFixed(2)}
                           </span>
                           <span className="text-sm text-gray-500 line-through block">
-                            ${product?.price?.toFixed(2) || '0.00'}
+                            ${product.price.toFixed(2)}
                           </span>
                         </div>
                       ) : (
                         <span className="text-lg font-bold text-gray-900">
-                          ${product?.price?.toFixed(2) || '0.00'}
+                          ${product.price.toFixed(2)}
                         </span>
                       )}
                     </div>
@@ -214,10 +170,10 @@ export default function Home() {
                         e.stopPropagation();
                         addItem(product);
                       }}
-                      className="p-2 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-colors"
+                      className="p-2 rounded-full bg-[#a5f41d] text-purple-600 hover:bg-[#a5f41d]-200 transition-colors"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="black">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </button>
                   </div>
